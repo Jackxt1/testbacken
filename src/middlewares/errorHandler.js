@@ -13,8 +13,11 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode).json({
     success: false,
     message: err.message || 'Internal Server Error',
+    timestamp: new Date().toISOString(),
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 };
 
 module.exports = errorHandler;
+
+//ดักจับ Error ทั้งหมดในระบบแล้วตอบกลับให้สวยงาม

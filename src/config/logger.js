@@ -6,3 +6,4 @@ const logger = {
 };
 
 module.exports = logger;
+//ตั้งค่าการบันทึก Log

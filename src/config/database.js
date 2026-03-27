@@ -17,3 +17,4 @@ const sequelize = isTest
     );
 
 module.exports = sequelize;
+//database.js: ตั้งค่าการเชื่อมต่อฐานข้อมูล

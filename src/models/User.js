@@ -68,3 +68,5 @@ User.prototype.toSafeJSON = function () {
 };
 
 module.exports = User;
+
+//User 1 คนต้องมีชื่อ, อีเมล, รหัสผ่าน

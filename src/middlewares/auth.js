@@ -61,3 +61,4 @@ exports.requireAdminOrOwner = (req, res, next) => {
     });
   }
 };
+//ตรวจสอบ Token (JWT) ว่าล็อกอินหรือยัง

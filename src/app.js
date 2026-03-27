@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./config/swagger');
+const swaggerSpec = require('./config/swagger'); // เรียกใช้ config ที่คุณสร้างไว้
 const sequelize = require('./config/database');
 const logger = require('./config/logger');
 const errorHandler = require('./middlewares/errorHandler');
@@ -15,7 +15,18 @@ const userRoutes = require('./routes/users');
 const app = express();
 
 // ── Security Headers ──────────────────────────────────────────────────────────
-app.use(helmet());
+// แก้ไข Helmet เพื่อให้รองรับการแสดงผลของ Swagger UI (Inline Scripts)
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        "script-src": ["'self'", "'unsafe-inline'"],
+        "img-src": ["'self'", "data:", "https://validator.swagger.io"],
+      },
+    },
+  })
+);
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -42,14 +53,16 @@ const loginLimiter = rateLimit({
     success: false,
     message: 'Too many login attempts, please try again after 1 minute',
   },
-  skip: () => process.env.NODE_ENV === 'test', // ข้ามตอนรัน test
+  skip: () => process.env.NODE_ENV === 'test',
 });
 
 // ── Body Parser ───────────────────────────────────────────────────────────────
+// ต้องวางก่อน Routes และ API Docs เพื่อให้ Swagger อ่านค่าตัวอย่างได้ถูกต้อง
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: false }));
 
 // ── API Docs ──────────────────────────────────────────────────────────────────
+// เข้าถึงที่ http://localhost:3000/api-docs ตามเงื่อนไขในรูปภาพ
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ── Health Check ──────────────────────────────────────────────────────────────
@@ -63,7 +76,7 @@ app.get('/health', async (req, res) => {
 });
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use('/api/auth/login', loginLimiter); // Rate limit เฉพาะ login
+app.use('/api/auth/login', loginLimiter); 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
@@ -85,6 +98,7 @@ const PORT = process.env.PORT || 3000;
 const start = async () => {
   try {
     await sequelize.authenticate();
+    // ระวัง: sync({ force: false }) ใน production
     await sequelize.sync();
     logger.info('Database connection established');
     app.listen(PORT, () => {
@@ -97,7 +111,6 @@ const start = async () => {
   }
 };
 
-// Export app for testing (don't call start() during tests)
 if (require.main === module) {
   start();
 }

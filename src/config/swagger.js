@@ -31,3 +31,4 @@ const options = {
 const swaggerSpec = swaggerJsdoc(options);
 
 module.exports = swaggerSpec;
+///ตั้งค่าสำหรับทำ API Documentation (สร้างหน้าเว็บอธิบายวิธีการใช้ API)

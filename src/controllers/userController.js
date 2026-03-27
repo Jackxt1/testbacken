@@ -104,7 +104,12 @@ exports.remove = async (req, res) => {
     }
 
     await user.destroy();
-    res.status(204).send();
+    
+    // แก้ตรงนี้
+    res.status(200).json({
+      success: true,
+      message: `User ${user.name} deleted successfully`,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server Error' });
   }
@@ -131,3 +136,4 @@ exports.setStatus = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
+//จัดการข้อมูล Profile ของ User

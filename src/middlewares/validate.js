@@ -67,3 +67,5 @@ const statusRules = [
 ];
 
 module.exports = { registerRules, loginRules, updateUserRules, statusRules };
+
+//ตรวจสอบรูปแบบข้อมูลที่ User ส่งมา (เช่น ลืมใส่ Email หรือไม่)

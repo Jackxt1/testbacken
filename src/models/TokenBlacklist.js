@@ -14,3 +14,5 @@ const TokenBlacklist = sequelize.define('TokenBlacklist', {
 });
 
 module.exports = TokenBlacklist;
+
+//เก็บ Token ที่ถูกสั่งยกเลิก (เช่น หลัง Logout)

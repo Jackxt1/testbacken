@@ -145,3 +145,5 @@ const authController = {
 };
 
 module.exports = authController;
+
+//จัดการ Login/Register
