@@ -96,9 +96,15 @@ const authController = {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         await User.update({ refresh_token: null }, { where: { id: decoded.id } });
       }
-      res.status(204).end();
+      res.status(200).json({
+        success: true,
+        message: 'Logged out successfully',
+      });
     } catch (error) {
-      res.status(204).end(); // logout สำเร็จเสมอ
+      res.status(200).json({
+        success: true,
+        message: 'Logged out successfully',
+      });
     }
   },
 
