@@ -1,0 +1,154 @@
+1. สมัครสมาชิก
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "newuser@example.com",
+  "password": "Password123",
+  "is_active": true
+}
+
+2. ล็อคอิน
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "newuser@example.com",
+  "password": "Password123"
+}
+→ copy accessToken และ refreshToken ไว้ใช้ต่อ
+
+3. ดูข้อมูลตัวเอง
+GET http://localhost:3000/api/auth/me
+Authorization: Bearer <accessToken>
+
+4. Refresh Token
+POST http://localhost:3000/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "<refreshToken>"
+}
+
+5. ดึง Users ทั้งหมด (ใช้ token admin)
+GET http://localhost:3000/api/users?page=1&limit=10
+Authorization: Bearer <accessToken admin>
+
+6. ดึง User รายบุคคล
+GET http://localhost:3000/api/users/1
+Authorization: Bearer <accessToken>
+
+7. อัปเดต User
+PUT http://localhost:3000/api/users/1
+Authorization: Bearer <accessToken>
+Content-Type: application/json
+
+{
+  "name": "Updated Name",
+  "email": "updated@example.com"
+}
+
+8. เปิด/ปิด Account
+PATCH http://localhost:3000/api/users/1/status
+Authorization: Bearer <accessToken admin>
+Content-Type: application/json
+
+{
+  "is_active": false
+}
+
+9. ลบ User
+DELETE http://localhost:3000/api/users/1
+Authorization: Bearer <accessToken admin>
+
+10. Logout
+POST http://localhost:3000/api/auth/logout
+Authorization: Bearer <accessToken>
+
+11. เช็คตาราง DB
+docker compose exec db mysql -u appuser -pchangeme userdb -e "DESCRIBE Users;"
+
+12. Validation — name ว่าง
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123",
+  "is_active": true
+}
+
+13. Validation — name สั้นเกิน
+json{
+  "name": "A",
+  "email": "test@example.com",
+  "password": "Password123",
+  "is_active": true
+}
+
+14. Validation — name ยาวเกิน
+json{
+  "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "email": "test@example.com",
+  "password": "Password123",
+  "is_active": true
+}
+```
+
+---
+
+**15. Pagination — เปลี่ยน page**
+```
+GET http://localhost:3000/api/users?page=2&limit=3
+Authorization: Bearer <accessToken admin>
+```
+
+---
+
+**16. Search**
+```
+GET http://localhost:3000/api/users?search=admin
+Authorization: Bearer <accessToken admin>
+```
+
+---
+
+**17. Filter role**
+```
+GET http://localhost:3000/api/users?role=admin
+Authorization: Bearer <accessToken admin>
+```
+
+---
+
+**18. Sort**
+```
+GET http://localhost:3000/api/users?sort=name&order=asc
+Authorization: Bearer <accessToken admin>
+```
+
+---
+
+**19. Security — Rate Limiting**
+```
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "wrongpassword"
+}
+```
+ยิง 6 ครั้งติดกัน → ครั้งที่ 6 ต้องได้ `429`
+
+---
+
+**20. Security — Helmet Headers**
+```
+GET http://localhost:3000/health
+ดู Response Headers → X-Content-Type-Options, X-Frame-Options
+
+3.8 การเทส 15เคสอย่างต่ำ
+docker compose exec app npm test
+docker compose exec app npm install เวลาบิ้วหรืออัพใหม่ต้องติดตั้ง

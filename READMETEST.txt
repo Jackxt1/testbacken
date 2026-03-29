@@ -106,3 +106,52 @@ Authorization: Bearer <accessToken admin>
 Sort ตามชื่อ
 GET http://localhost:3000/api/users?sort=name&order=asc
 Authorization: Bearer <accessToken admin>
+
+ Security เทส
+
+ 1. bcrypt — เช็คใน Adminer
+http://localhost:8080
+เข้า DB → table users → ดู column password ต้องขึ้น $2b$10$... ✅
+
+2. ไม่ส่ง Password กลับใน Response
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123"
+}
+✅ ต้องไม่มี field password ใน response
+
+3. Rate Limiting — ยิง 6 ครั้งติดกัน
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "wrongpassword"
+}
+✅ ครั้งที่ 6 ต้องได้ 429 Too Many Requests
+
+4. Helmet — Security Headers
+GET http://localhost:3000/health
+คลิก Headers ใน Response ต้องเห็น
+
+X-Content-Type-Options: nosniff ✅
+X-Frame-Options: SAMEORIGIN ✅
+X-XSS-Protection: 0 ✅
+Strict-Transport-Security ✅
+
+
+5. Environment Variables
+เช็คไฟล์ .env มี
+
+JWT_SECRET ✅
+JWT_REFRESH_SECRET ✅
+DB_PASSWORD ✅
+
+ไม่มี secret อยู่ในโค้ดตรงๆ ✅
+
+6. CORS
+GET http://localhost:3000/health
+ดู Response Headers จะเห็น Access-Control-Allow-Origin ✅
